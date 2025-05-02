@@ -21,19 +21,37 @@ public class MapController : MonoBehaviour
         return new Vector2(uiX, uiY);
     }
 
-    public Vector2 UIPositionToMap(Vector2 uiPosition)
+    // Inside MapController.cs
+    public Vector2 UIPositionToMap(Vector2 uiPosition) // uiPosition here is the 'adjustedLocalPoint' from InputController
     {
         if (mapPanelRect == null)
         {
             Debug.LogError("Map Panel Rect is not assigned in MapController!");
             return Vector2.zero;
         }
-        // Adjust for pivot/anchor if necessary - assuming simple case for now
+
+        // --- ADDED LOGGING ---
+        Debug.Log($"[MapController] Received UI Position: {uiPosition}");
+        Debug.Log($"[MapController] Map Panel Rect Width: {mapPanelRect.rect.width}, Height: {mapPanelRect.rect.height}");
+        Debug.Log($"[MapController] Target Map Dimensions: {mapDimensions}");
+        // --- END ADDED LOGGING ---
+
+
         float mapX = (uiPosition.x / mapPanelRect.rect.width) * mapDimensions.x;
         float mapY = (uiPosition.y / mapPanelRect.rect.height) * mapDimensions.y;
 
+        // --- ADDED LOGGING ---
+        Debug.Log($"[MapController] Calculated Raw Map Coords: ({mapX}, {mapY})");
+        // --- END ADDED LOGGING ---
+
+
         mapX = Mathf.Clamp(mapX, 0f, mapDimensions.x);
         mapY = Mathf.Clamp(mapY, 0f, mapDimensions.y);
+
+        // --- ADDED LOGGING ---
+        Debug.Log($"[MapController] Clamped Final Map Coords: ({mapX}, {mapY})");
+        // --- END ADDED LOGGING ---
+
 
         return new Vector2(mapX, mapY);
     }
