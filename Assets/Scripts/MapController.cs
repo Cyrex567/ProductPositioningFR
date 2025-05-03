@@ -7,17 +7,28 @@ public class MapController : MonoBehaviour
     public RectTransform mapPanelRect; // MAKE SURE THIS IS ASSIGNED IN INSPECTOR
     public Vector2 mapDimensions = new Vector2(10f, 10f);
 
-    public Vector2 MapToUIPosition(Vector2 mapCoords)
+    public Vector2 MapToUIPosition(Vector2 mapCoords) // mapCoords are 0-10 logical values
     {
         if (mapPanelRect == null)
         {
             Debug.LogError("Map Panel Rect is not assigned in MapController!");
-            return Vector2.zero; // Avoid errors if not assigned
+            return Vector2.zero;
         }
+
+        // Calculate position relative to width/height, assuming 0,0 is bottom-left
         float uiX = (mapCoords.x / mapDimensions.x) * mapPanelRect.rect.width;
         float uiY = (mapCoords.y / mapDimensions.y) * mapPanelRect.rect.height;
-        // Basic conversion assuming bottom-left anchor for the panel for simplicity now.
-        // We might adjust this later if needed.
+
+        // --- ADD THIS PIVOT ADJUSTMENT ---
+        // Offset the calculated position based on the parent's pivot to get correct localPosition
+        // If pivot is (0.5, 0.5), this subtracts half the width/height.
+        uiX -= mapPanelRect.rect.width * mapPanelRect.pivot.x;
+        uiY -= mapPanelRect.rect.height * mapPanelRect.pivot.y;
+        // --- END PIVOT ADJUSTMENT ---
+
+        // Optional log to verify calculation
+        // Debug.Log($"[MapToUIPosition] Input: {mapCoords}, Panel Size: {mapPanelRect.rect.size}, Pivot: {mapPanelRect.pivot}, Final LocalPos: ({uiX}, {uiY})");
+
         return new Vector2(uiX, uiY);
     }
 
